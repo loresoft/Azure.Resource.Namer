@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using AzureNamer.Core.Data;
 using AzureNamer.Shared;
 
 using Blazone.Authentication;
@@ -98,6 +97,9 @@ public static class Program
             .AddAuthorization()
             .AddBlazoneServer()
             .AddAntiforgery();
+
+        services
+            .AddHttpContextAccessor();
 
         services
             .AddEndpointsApiExplorer()

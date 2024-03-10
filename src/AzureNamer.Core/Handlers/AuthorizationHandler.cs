@@ -2,6 +2,7 @@ using AutoMapper;
 
 using AzureNamer.Core.Commands;
 using AzureNamer.Core.Data;
+using AzureNamer.Core.Data.Entities;
 using AzureNamer.Shared.Constants;
 using AzureNamer.Shared.Extensions;
 using AzureNamer.Shared.Models;
@@ -49,6 +50,24 @@ public class AuthorizationHandler : DataContextHandlerBase<AzureNamerContext, Au
             };
 
             await DataContext.Users.AddAsync(user, cancellationToken);
+            await DataContext.SaveChangesAsync(cancellationToken);
+        }
+
+        // save login request
+        if (request.BrowserDetail != null)
+        {
+            var userLogin = new UserLogin
+            {
+                UserId = user.Id,
+                Name = request.BrowserDetail.Name,
+                Type = request.BrowserDetail.Type,
+                Device = request.BrowserDetail.Device,
+                Platform = request.BrowserDetail.Platform,
+                Version = request.BrowserDetail.Version,
+                IpAddress = request.BrowserDetail.IpAddress,
+                UserAgent = request.BrowserDetail.UserAgent,
+            };
+            await DataContext.UserLogins.AddAsync(userLogin, cancellationToken);
             await DataContext.SaveChangesAsync(cancellationToken);
         }
 

@@ -7,10 +7,10 @@ using AzureNamer.Shared.Models;
 // ReSharper disable once CheckNamespace
 namespace AzureNamer.Core.Registrations;
 
-public class UserOrganizationServiceRegistration
+public static class UserOrganizationServiceRegistration
 {
     [RegisterServices]
-    public void Register(IServiceCollection services)
+    public static void Register(IServiceCollection services)
     {
         #region Generated Register
         services.AddEntityQueries<AzureNamer.Core.Data.AzureNamerContext, AzureNamer.Core.Data.Entities.UserOrganization, int, UserOrganizationReadModel>();

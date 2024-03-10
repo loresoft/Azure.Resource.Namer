@@ -4,6 +4,7 @@ using System.Text.Json;
 using AzureNamer.Core.Commands;
 using AzureNamer.Shared;
 using AzureNamer.Shared.Constants;
+using AzureNamer.Server.Extensions;
 
 using Blazone.Authentication.Options;
 
@@ -22,13 +23,20 @@ public class ClaimsTransformation : IClaimsTransformation
     private readonly ILogger<ClaimsTransformation> _logger;
     private readonly IMemoryCache _memoryCache;
     private readonly AuthenticationEndpointOptions _endpointOptions;
+    private readonly IHttpContextAccessor _contextAccessor;
 
-    public ClaimsTransformation(IMediator mediator, ILogger<ClaimsTransformation> logger, IOptions<AuthenticationEndpointOptions> endpointOptions, IMemoryCache memoryCache)
+    public ClaimsTransformation(
+        IMediator mediator,
+        ILogger<ClaimsTransformation> logger,
+        IOptions<AuthenticationEndpointOptions> endpointOptions,
+        IMemoryCache memoryCache,
+        IHttpContextAccessor contextAccessor)
     {
         _mediator = mediator;
         _logger = logger;
         _endpointOptions = endpointOptions.Value;
         _memoryCache = memoryCache;
+        _contextAccessor = contextAccessor;
     }
 
     public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
@@ -44,7 +52,8 @@ public class ClaimsTransformation : IClaimsTransformation
 
     private async Task<ClaimsPrincipal> LoadClaims(ICacheEntry cacheEntry, ClaimsPrincipal principal)
     {
-        var command = new AuthorizationCommand(principal);
+        var browserDetail = _contextAccessor.HttpContext.GetBrowserData();
+        var command = new AuthorizationCommand(principal, browserDetail);
         var userMembership = await _mediator.Send(command);
 
         if (userMembership == null)
@@ -79,7 +88,7 @@ public class ClaimsTransformation : IClaimsTransformation
         return clone;
     }
 
-    private void ReplaceClaim(ClaimsIdentity identity, string type, string value)
+    private static void ReplaceClaim(ClaimsIdentity identity, string type, string value)
     {
         var claim = identity.FindFirst(type);
         if (claim != null)
