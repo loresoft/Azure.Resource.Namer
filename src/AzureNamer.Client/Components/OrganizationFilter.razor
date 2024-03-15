@@ -1,0 +1,32 @@
+@inject UserMembershipStore MembershipStore;
+
+<select @attributes="Attributes"
+        @bind="SelectedId"
+        @bind:after="() => OnSelected.InvokeAsync(SelectedId)">
+    <option value="">-- All --</option>
+    @if (MembershipStore.Model?.Organizations != null)
+    {
+        @foreach (var organization in MembershipStore.Model.Organizations)
+        {
+            <option value="@organization.Id">@organization.Name</option>
+        }
+    }
+</select>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> Attributes { get; set; } = new Dictionary<string, object>();
+
+    [Parameter]
+    public string? SelectedId { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSelected { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await MembershipStore.Load();
+    }
+
+}

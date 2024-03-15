@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 
+using AzureNamer.Shared.Definitions;
+
 using Generator.Equals;
 
 namespace AzureNamer.Shared.Models;
 
 [Equatable]
 public partial class LocationReadModel
-    : EntityReadModel
+    : EntityReadModel, IHaveOrganization
 {
     #region Generated Properties
     public Guid Identifier { get; set; }
@@ -22,4 +24,7 @@ public partial class LocationReadModel
 
     #endregion
 
+    public string OrganizationName { get; set; } = null!;
 }
+
+

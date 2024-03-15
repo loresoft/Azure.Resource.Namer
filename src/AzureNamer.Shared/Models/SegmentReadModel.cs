@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 
+using AzureNamer.Shared.Definitions;
+
 using Generator.Equals;
 
 namespace AzureNamer.Shared.Models;
 
 [Equatable]
 public partial class SegmentReadModel
-    : EntityReadModel
+    : EntityReadModel, IHaveOrganization
 {
     #region Generated Properties
     public string Name { get; set; } = null!;
@@ -34,4 +36,7 @@ public partial class SegmentReadModel
 
     #endregion
 
+    public string OrganizationName { get; set; } = null!;
+
+    public string SegmentTypeName { get; set; } = null!;
 }

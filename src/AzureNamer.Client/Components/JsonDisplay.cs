@@ -55,8 +55,6 @@ public class JsonDisplay : ComponentBase
             case JsonValueKind.False:
                 builder.AddContent(Next(), jsonElement.ToString());
                 break;
-            case JsonValueKind.Undefined:
-            case JsonValueKind.Null:
             default:
                 builder.AddContent(Next(), string.Empty);
                 break;

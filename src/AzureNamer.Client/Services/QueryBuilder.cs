@@ -1,5 +1,6 @@
 using System.Security.Claims;
 
+using AzureNamer.Shared.Definitions;
 using AzureNamer.Shared.Extensions;
 
 using LoreSoft.Blazor.Controls;
@@ -23,6 +24,39 @@ public static class QueryBuilder
             Operator = EntityFilterOperators.Equal
         };
     }
+
+    public static EntityQuery CreateQuery(
+        DataRequest request,
+        int? organizationId,
+        string? searchText = null,
+        IEnumerable<string>? searchFields = null,
+        string? searchOperator = null)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var organizationFilter = OrganizationFilter(organizationId);
+        var searchFilter = SearchFilter(searchText, searchFields, searchOperator);
+
+        var filter = new EntityFilter
+        {
+            Logic = EntityFilterLogic.And,
+            Filters = []
+        };
+
+        if (organizationFilter != null)
+            filter.Filters.Add(organizationFilter);
+        if (searchFilter != null)
+            filter.Filters.Add(searchFilter);
+
+        return new EntityQuery
+        {
+            Page = request.Page,
+            PageSize = request.PageSize,
+            Sort = CreateSort(request),
+            Filter = filter
+        };
+    }
+
 
     public static EntityQuery CreateQuery(
         DataRequest request,
@@ -62,6 +96,19 @@ public static class QueryBuilder
         {
             Logic = EntityFilterLogic.Or,
             Filters = textFilters
+        };
+    }
+
+    public static EntityFilter? OrganizationFilter(int? organizationId)
+    {
+        if (!organizationId.HasValue)
+            return null;
+
+        return new EntityFilter
+        {
+            Name = nameof(IHaveOrganization.OrganizationId),
+            Value = organizationId,
+            Operator = EntityFilterOperators.Equal
         };
     }
 

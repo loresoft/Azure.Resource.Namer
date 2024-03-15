@@ -1,5 +1,7 @@
 using AzureNamer.Shared.Models;
 
+using MyCSharp.HttpUserAgentParser;
+
 namespace AzureNamer.Server.Extensions;
 
 public static class HttpExtensions
@@ -25,13 +27,13 @@ public static class HttpExtensions
         if (string.IsNullOrEmpty(model.UserAgent))
             return model;
 
-        //var userAgentInformation = HttpUserAgentParser.Parse(model.UserAgent);
+        var userAgentInformation = HttpUserAgentParser.Parse(model.UserAgent);
 
-        //model.Name = userAgentInformation.Name;
-        //model.Type = userAgentInformation.Type.ToString();
-        //model.Platform = userAgentInformation.Platform.ToString();
-        //model.Version = userAgentInformation.Version;
-        //model.Device = userAgentInformation.MobileDeviceType;
+        model.Name = userAgentInformation.Name;
+        model.Type = userAgentInformation.Type.ToString();
+        model.Platform = userAgentInformation.Platform.ToString();
+        model.Version = userAgentInformation.Version;
+        model.Device = userAgentInformation.MobileDeviceType;
 
         return model;
     }

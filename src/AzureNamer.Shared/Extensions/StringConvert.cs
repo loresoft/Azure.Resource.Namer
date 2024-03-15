@@ -1,4 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AzureNamer.Shared.Extensions;
 
@@ -14,7 +17,8 @@ public static class StringConvert
     /// <returns>
     /// true if <paramref name="value"/> equals <see cref="F:System.Boolean.TrueString"/>, or false if <paramref name="value"/> equals <see cref="F:System.Boolean.FalseString"/> or null.
     /// </returns>
-    public static bool? ToBoolean(this string value)
+    [return: NotNullIfNotNull(nameof(value))]
+    public static bool? ToBoolean(this string? value)
     {
         if (value == null)
             return null;
@@ -33,7 +37,7 @@ public static class StringConvert
             || string.Equals(v, "on", StringComparison.OrdinalIgnoreCase))
             return true;
 
-        return null;
+        return false;
     }
 
     /// <summary>
@@ -43,7 +47,7 @@ public static class StringConvert
     /// <returns>
     /// An 8-bit unsigned integer that is equivalent to <paramref name="value"/>, or zero if <paramref name="value"/> is null.
     /// </returns>
-    public static byte? ToByte(this string value)
+    public static byte? ToByte(this string? value)
     {
         if (value == null)
             return null;
@@ -62,7 +66,7 @@ public static class StringConvert
     /// <returns>
     /// An 8-bit unsigned integer that is equivalent to <paramref name="value"/>, or zero if <paramref name="value"/> is null.
     /// </returns>
-    public static byte? ToByte(this string value, IFormatProvider provider)
+    public static byte? ToByte(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -80,7 +84,7 @@ public static class StringConvert
     /// <returns>
     /// The date and time equivalent of the value of <paramref name="value"/>, or the date and time equivalent of <see cref="F:System.DateTime.MinValue"/> if <paramref name="value"/> is null.
     /// </returns>
-    public static DateTime? ToDateTime(this string value)
+    public static DateTime? ToDateTime(this string? value)
     {
         if (value == null)
             return null;
@@ -99,7 +103,7 @@ public static class StringConvert
     /// <returns>
     /// The date and time equivalent of the value of <paramref name="value"/>, or the date and time equivalent of <see cref="F:System.DateTime.MinValue"/> if <paramref name="value"/> is null.
     /// </returns>
-    public static DateTime? ToDateTime(this string value, IFormatProvider provider)
+    public static DateTime? ToDateTime(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -117,7 +121,7 @@ public static class StringConvert
     /// <returns>
     /// A decimal number that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static decimal? ToDecimal(this string value)
+    public static decimal? ToDecimal(this string? value)
     {
         if (value == null)
             return null;
@@ -136,7 +140,7 @@ public static class StringConvert
     /// <returns>
     /// A decimal number that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static decimal? ToDecimal(this string value, IFormatProvider provider)
+    public static decimal? ToDecimal(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -154,7 +158,7 @@ public static class StringConvert
     /// <returns>
     /// A double-precision floating-point number that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static double? ToDouble(this string value)
+    public static double? ToDouble(this string? value)
     {
         if (value == null)
             return null;
@@ -173,7 +177,7 @@ public static class StringConvert
     /// <returns>
     /// A double-precision floating-point number that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static double? ToDouble(this string value, IFormatProvider provider)
+    public static double? ToDouble(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -191,7 +195,7 @@ public static class StringConvert
     /// <returns>
     /// A 16-bit signed integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static short? ToInt16(this string value)
+    public static short? ToInt16(this string? value)
     {
         if (value == null)
             return null;
@@ -210,7 +214,7 @@ public static class StringConvert
     /// <returns>
     /// A 16-bit signed integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static short? ToInt16(this string value, IFormatProvider provider)
+    public static short? ToInt16(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -228,7 +232,7 @@ public static class StringConvert
     /// <returns>
     /// A 32-bit signed integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static int? ToInt32(this string value)
+    public static int? ToInt32(this string? value)
     {
         if (value == null)
             return null;
@@ -247,7 +251,7 @@ public static class StringConvert
     /// <returns>
     /// A 32-bit signed integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static int? ToInt32(this string value, IFormatProvider provider)
+    public static int? ToInt32(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -265,7 +269,7 @@ public static class StringConvert
     /// <returns>
     /// A 64-bit signed integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static long? ToInt64(this string value)
+    public static long? ToInt64(this string? value)
     {
         if (value == null)
             return null;
@@ -284,7 +288,7 @@ public static class StringConvert
     /// <returns>
     /// A 64-bit signed integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static long? ToInt64(this string value, IFormatProvider provider)
+    public static long? ToInt64(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -302,7 +306,7 @@ public static class StringConvert
     /// <returns>
     /// A single-precision floating-point number that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static float? ToSingle(this string value)
+    public static float? ToSingle(this string? value)
     {
         if (value == null)
             return null;
@@ -321,7 +325,7 @@ public static class StringConvert
     /// <returns>
     /// A single-precision floating-point number that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static float? ToSingle(this string value, IFormatProvider provider)
+    public static float? ToSingle(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -339,7 +343,7 @@ public static class StringConvert
     /// <returns>
     /// A 16-bit unsigned integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static ushort? ToUInt16(this string value)
+    public static ushort? ToUInt16(this string? value)
     {
         if (value == null)
             return null;
@@ -358,7 +362,7 @@ public static class StringConvert
     /// <returns>
     /// A 16-bit unsigned integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static ushort? ToUInt16(this string value, IFormatProvider provider)
+    public static ushort? ToUInt16(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -376,7 +380,7 @@ public static class StringConvert
     /// <returns>
     /// A 32-bit unsigned integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static uint? ToUInt32(this string value)
+    public static uint? ToUInt32(this string? value)
     {
         if (value == null)
             return null;
@@ -395,7 +399,7 @@ public static class StringConvert
     /// <returns>
     /// A 32-bit unsigned integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static uint? ToUInt32(this string value, IFormatProvider provider)
+    public static uint? ToUInt32(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -413,7 +417,7 @@ public static class StringConvert
     /// <returns>
     /// A 64-bit signed integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static ulong? ToUInt64(this string value)
+    public static ulong? ToUInt64(this string? value)
     {
         if (value == null)
             return null;
@@ -432,7 +436,7 @@ public static class StringConvert
     /// <returns>
     /// A 64-bit unsigned integer that is equivalent to the number in <paramref name="value"/>, or 0 (zero) if <paramref name="value"/> is null.
     /// </returns>
-    public static ulong? ToUInt64(this string value, IFormatProvider provider)
+    public static ulong? ToUInt64(this string? value, IFormatProvider provider)
     {
         if (value == null)
             return null;
@@ -450,7 +454,7 @@ public static class StringConvert
     /// <returns>
     /// The <see cref="TimeSpan"/> equivalent of the <paramref name="value"/>, or <see cref="F:System.TimeSpan.Zero"/> if <paramref name="value"/> is null.
     /// </returns>
-    public static TimeSpan? ToTimeSpan(this string value)
+    public static TimeSpan? ToTimeSpan(this string? value)
     {
         if (value == null)
             return null;
@@ -468,7 +472,7 @@ public static class StringConvert
     /// <returns>
     /// The <see cref="Guid"/> equivalent of the <paramref name="value"/>, or <see cref="F:System.Guid.Empty"/> if <paramref name="value"/> is null.
     /// </returns>
-    public static Guid? ToGuid(this string value)
+    public static Guid? ToGuid(this string? value)
     {
         if (value == null)
             return null;
@@ -485,7 +489,7 @@ public static class StringConvert
     /// <param name="input">The input string to convert.</param>
     /// <param name="value">The converted value.</param>
     /// <returns><c>true</c> if the value is converted; otherwise <c>false</c></returns>
-    public static bool TryConvert<T>(this string input, out T? value)
+    public static bool TryConvert<T>(this string? input, out T? value)
     {
         var type = typeof(T);
 
@@ -502,7 +506,7 @@ public static class StringConvert
     /// <param name="type">The type to convert to.</param>
     /// <param name="value">The converted value.</param>
     /// <returns><c>true</c> if the value is converted; otherwise <c>false</c></returns>
-    public static bool TryConvert(this string input, Type type, out object? value)
+    public static bool TryConvert(this string? input, Type type, out object? value)
     {
         // first try string
         if (type == typeof(string))

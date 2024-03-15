@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 
+using AzureNamer.Shared.Definitions;
+
 using Generator.Equals;
 
 namespace AzureNamer.Shared.Models;
 
 [Equatable]
 public partial class LocationUpdateModel
-    : EntityUpdateModel
+    : EntityUpdateModel, IHaveOrganization
 {
     #region Generated Properties
     public Guid Identifier { get; set; }

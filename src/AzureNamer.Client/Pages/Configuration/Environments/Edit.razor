@@ -1,0 +1,177 @@
+@page "/environments/{id:int}"
+
+@attribute [Authorize]
+
+@inject NotificationService NotificationService
+@inject EnvironmentStore EnvironmentStore
+@inject NavigationManager Navigation
+
+<PageTitle>Environment @EnvironmentStore.Model?.Name - Edit - Azure Namer</PageTitle>
+
+<div class="container-xxl">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/environments">Environments</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Edit
+            </li>
+        </ol>
+    </nav>
+
+    <Conditional Condition="EditContext != null">
+        <Passed>
+            <EditForm EditContext="@EditContext" OnValidSubmit="@HandleSave">
+                <FluentValidationValidator />
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-user me-2" aria-hidden="true"></i> Environment Edit - @EnvironmentStore.Model?.Name
+                        <Conditional Condition="@EnvironmentStore.IsDirty">
+                            *
+                        </Conditional>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <ValidationSummary />
+                            </div>
+                        </div>
+
+                        <Form Model="EnvironmentStore.Model" />
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <BusyButton id="save-button"
+                                            type="submit"
+                                            Busy="EnvironmentStore.IsBusy"
+                                            Disabled="EnvironmentStore.IsClean"
+                                            class="btn btn-primary">
+                                    <BusyTemplate>
+                                        <span class='spinner-border spinner-border-sm'></span> Saving...
+                                    </BusyTemplate>
+                                    <ChildContent>
+                                        Save
+                                    </ChildContent>
+                                </BusyButton>
+                            </div>
+                            <div class="col">
+                                <button id="delete-button"
+                                        type="button"
+                                        @onclick="HandleDelete"
+                                        disabled="@EnvironmentStore.IsBusy"
+                                        class="btn btn-danger fa-pull-right">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </EditForm>
+        </Passed>
+        <Failed>
+            <div class="card mb-5">
+                <div class="card-header">
+                    <i class="fas fa-user me-2"
+                       aria-hidden="true"></i> Environment Edit - Loading ...
+                </div>
+                <div class="card-body">
+                    <Loading />
+                </div>
+            </div>
+        </Failed>
+    </Conditional>
+</div>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = null!;
+
+    private EditContext? EditContext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        EnvironmentStore.OnChange += HandleModelChange;
+
+        try
+        {
+            await EnvironmentStore.Load(Id);
+            var model = EnvironmentStore.Model;
+
+            if (model == null)
+                Navigation.NavigateTo("/environments");
+
+            EditContext = new EditContext(model!);
+            EditContext.OnFieldChanged += HandleFormChange;
+        }
+        catch (Exception ex)
+        {
+            NotificationService.ShowError(ex);
+        }
+    }
+
+    protected virtual async Task HandleSave()
+    {
+        try
+        {
+            await EnvironmentStore.Save();
+
+            var model = EnvironmentStore.Model;
+
+            NotificationService.ShowSuccess($"Environment '{model!.Name}' saved successfully");
+        }
+        catch (Exception ex)
+        {
+            NotificationService.ShowError(ex);
+        }
+    }
+
+    protected virtual async Task HandleDelete()
+    {
+        try
+        {
+            var name = EnvironmentStore.Model!.Name;
+
+            if (!await Modal.ConfirmDelete($"Are you sure you want to delete environment '{name}'?"))
+                return;
+
+
+            await EnvironmentStore.Delete(Id);
+            NotificationService.ShowSuccess($"Environment '{name}' deleted successfully");
+            Navigation.NavigateTo("/environments");
+        }
+        catch (Exception ex)
+        {
+            NotificationService.ShowError(ex);
+        }
+    }
+
+    private void HandleModelChange()
+    {
+        InvokeAsync(() => StateHasChanged());
+    }
+
+    private void HandleFormChange(object? sender, FieldChangedEventArgs args)
+    {
+        EnvironmentStore.NotifyStateChanged();
+    }
+
+    public void Dispose()
+    {
+        EnvironmentStore.OnChange -= HandleModelChange;
+
+        if (EditContext != null)
+            EditContext.OnFieldChanged -= HandleFormChange;
+    }
+
+}

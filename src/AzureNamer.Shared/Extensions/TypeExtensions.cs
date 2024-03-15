@@ -7,7 +7,7 @@ public static class TypeExtensions
     /// </summary>
     /// <param name="type">The type.</param>
     /// <returns>Returns a type dealing with <see cref="T:Nullable`1"/>.</returns>
-    public static Type? GetUnderlyingType(this Type type)
+    public static Type GetUnderlyingType(this Type type)
     {
         if (type == null)
             throw new ArgumentNullException(nameof(type));

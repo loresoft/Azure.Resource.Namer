@@ -1,23 +1,32 @@
 @using System.Net.Http
 @using System.Net.Http.Json
 
+@using Microsoft.AspNetCore.Authorization
+
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
-@using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
 
 @using AzureNamer.Client
 @using AzureNamer.Client.Components
+@using AzureNamer.Client.Extensions
 @using AzureNamer.Client.Layout
 @using AzureNamer.Client.Pages
+@using AzureNamer.Client.Repositories
+@using AzureNamer.Client.Services
+@using AzureNamer.Client.Stores
 
 @using AzureNamer.Shared
+@using AzureNamer.Shared.Constants
 @using AzureNamer.Shared.Extensions
 @using AzureNamer.Shared.Models
 
 @using Blazored.FluentValidation
+@using Blazored.Modal.Services;
 
 @using LoreSoft.Blazor.Controls
+
+@using MediatR.CommandQuery.Queries

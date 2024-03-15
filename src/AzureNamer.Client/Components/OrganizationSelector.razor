@@ -1,0 +1,52 @@
+@typeparam TModel where TModel : AzureNamer.Shared.Definitions.IHaveOrganization
+@inject UserMembershipStore MembershipStore;
+
+<div class="mb-3">
+    <label for="OrganizationId" class="form-label">
+        Organization: <span class="text-danger">*</span>
+    </label>
+    <Typeahead SearchMethod="Search"
+               ConvertMethod="Convert"
+               Items="Organizations"
+               @bind-Value="Model.OrganizationId"
+               Placeholder="Organization">
+        <SelectedTemplate Context="id">
+            @Lookup(id)?.Name
+        </SelectedTemplate>
+        <ResultTemplate Context="item">
+            @item.Name
+        </ResultTemplate>
+    </Typeahead>
+    <ValidationMessage For="@(() => Model.OrganizationId)" />
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public required TModel Model { get; set; }
+
+    protected IReadOnlyCollection<OrganizationMembership> Organizations => MembershipStore.Model?.Organizations ?? [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await MembershipStore.Load();
+    }
+
+    protected async Task<IEnumerable<OrganizationMembership>> Search(string searchText)
+    {
+        var result = Organizations
+            .Where(x => x.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        return await Task.FromResult(result);
+    }
+
+    protected int Convert(OrganizationMembership item)
+    {
+        return item.Id;
+    }
+
+    protected OrganizationMembership? Lookup(int? id)
+    {
+        return Organizations.FirstOrDefault(p => p.Id == id);
+    }
+}

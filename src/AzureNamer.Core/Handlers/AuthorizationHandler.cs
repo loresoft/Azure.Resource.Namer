@@ -7,6 +7,8 @@ using AzureNamer.Shared.Constants;
 using AzureNamer.Shared.Extensions;
 using AzureNamer.Shared.Models;
 
+using Blazone.Authentication.Extensions;
+
 using MediatR.CommandQuery.EntityFrameworkCore.Handlers;
 
 using Microsoft.EntityFrameworkCore;

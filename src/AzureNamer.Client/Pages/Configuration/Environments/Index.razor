@@ -1,7 +1,170 @@
 @page "/environments"
 
-<h3>Environments</h3>
+@attribute [Authorize]
+
+@inject NotificationService NotificationService
+@inject EnvironmentRepository Repository
+@inject UserMembershipStore MembershipStore
+
+<PageTitle>Environments - Azure Namer</PageTitle>
+
+<div class="container-xxl">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Environments
+            </li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header">
+            <form @onsubmit="HandleSearch">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <i class="fas fa-users me-2"
+                           aria-hidden="true"></i> Environments
+                    </div>
+                    <div class="col-sm-8 d-flex">
+                        <select class="form-select form-select-sm me-2"
+                                @bind="SelectedId"
+                                @bind:after="Refresh">
+                            <option value="">-- All --</option>
+                            @if (MembershipStore.Model?.Organizations != null)
+                            {
+                                @foreach (var organization in MembershipStore.Model.Organizations)
+                                {
+                                    <option value="@organization.Id">@organization.Name</option>
+                                }
+                            }
+                        </select>
+
+                        <div class="input-group input-group-sm me-2">
+                            <input type="search"
+                                   @bind="SearchText"
+                                   class="form-control"
+                                   placeholder="Search" />
+                            <div class="input-group-append">
+                                <button class="btn btn-sm btn-outline-secondary"
+                                        type="submit">
+                                    <i class="fas fa-search"
+                                       aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <a class="btn btn-sm btn-primary ms-2"
+                           title="Create New Environment"
+                           href="/environments/create">
+                            Create
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <DataGrid DataProvider="LoadData" TItem="EnvironmentReadModel" class="table table-hover table-bordered mb-0" @ref="DataGrid">
+                    <DataColumns>
+                        <DataColumn TItem="EnvironmentReadModel" Property="p => p.Name" Width="250px" SortIndex="0">
+                            <Template Context="item">
+                                <a href="/environments/@item.Id" class="d-block" title="@item.Name">@item.Name</a>
+                            </Template>
+                        </DataColumn>
+                        <DataColumn TItem="EnvironmentReadModel" Property="p => p.Abbreviation" Width="150px" />
+                        <DataColumn TItem="EnvironmentReadModel" Property="p => p.Description" />
+                        <DataColumn TItem="EnvironmentReadModel" Property="p => p.OrganizationName" Title="Organization" Width="150px" />
+                        <DataColumn TItem="EnvironmentReadModel" Property="p => p.Updated" Width="115px">
+                            <Template Context="item">
+                                <abbr title="@item.Updated.ToString("f")">
+                                    <span>@item.Updated.ToString("d")</span>
+                                </abbr>
+                            </Template>
+                        </DataColumn>
+                    </DataColumns>
+                    <DataPagination Context="grid">
+                        <div class="w-100 m-1 d-flex justify-content-between align-items-center">
+                            <DataPager PageSize="20" ShowEmpty="true" />
+                            <DataSizer />
+                            <div class="me-1">@grid.Pager.StartItem - @grid.Pager.EndItem of @grid.Pager.Total</div>
+                        </div>
+                    </DataPagination>
+                </DataGrid>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <a class="btn btn-primary"
+               title="Create New Environment"
+               href="/environments/create">
+                Create
+            </a>
+        </div>
+    </div>
+</div>
+
+
 
 @code {
+    private DataGrid<EnvironmentReadModel>? DataGrid { get; set; }
 
+    private string? SearchText { get; set; }
+
+    private string? SelectedId { get; set; }
+
+    private async ValueTask<DataResult<EnvironmentReadModel>> LoadData(DataRequest request)
+    {
+        try
+        {
+            var searchFields = new List<string>()
+            {
+                nameof(EnvironmentReadModel.Name),
+                nameof(EnvironmentReadModel.Abbreviation),
+                nameof(EnvironmentReadModel.Description),
+            };
+            var organizationId = SelectedId.ToInt32();
+            var query = QueryBuilder.CreateQuery(request, organizationId, SearchText, searchFields);
+
+            var result = await Repository.Page(query);
+
+            var response = new DataResult<EnvironmentReadModel>((int)result.Total, result.Data);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            NotificationService.ShowError(ex);
+
+            var response = new DataResult<EnvironmentReadModel>(0, Enumerable.Empty<EnvironmentReadModel>());
+            return response;
+        }
+    }
+
+    private async Task HandleOrganizationChange(ChangeEventArgs e)
+    {
+        SelectedId = e.Value as string;
+        await Refresh();
+    }
+
+    private async Task HandleSearch()
+    {
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        await InvokeAsync(() =>
+        {
+            if (DataGrid != null)
+                DataGrid.RefreshAsync(true);
+        });
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await MembershipStore.Load();
+    }
 }

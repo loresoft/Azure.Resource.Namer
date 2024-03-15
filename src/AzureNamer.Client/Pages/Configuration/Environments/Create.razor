@@ -1,0 +1,132 @@
+@page "/environments/create"
+
+@attribute [Authorize]
+
+@inject NotificationService NotificationService
+@inject EnvironmentStore EnvironmentStore
+@inject NavigationManager Navigation
+
+<PageTitle>Environment Create - Azure Namer</PageTitle>
+
+<div class="container-xxl">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/environments">Environments</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Create
+            </li>
+        </ol>
+    </nav>
+
+    <EditForm EditContext="@EditContext" OnValidSubmit="@HandleSave">
+        <FluentValidationValidator />
+
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-user me-2" aria-hidden="true"></i> Environment Create
+                <Conditional Condition="@EnvironmentStore.IsDirty">
+                    *
+                </Conditional>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <ValidationSummary />
+                    </div>
+                </div>
+
+                <Form Model="EnvironmentStore.Model" />
+
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col">
+                        <BusyButton id="save-button"
+                                    type="submit"
+                                    Busy="EnvironmentStore.IsBusy"
+                                    Disabled="EnvironmentStore.IsClean"
+                                    class="btn btn-primary">
+                            <BusyTemplate>
+                                <span class='spinner-border spinner-border-sm'></span> Saving...
+                            </BusyTemplate>
+                            <ChildContent>
+                                Save
+                            </ChildContent>
+                        </BusyButton>
+                    </div>
+                    <div class="col">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+
+</div>
+
+@code {
+    private EditContext? EditContext { get; set; }
+
+    protected override void OnInitialized()
+    {
+        EnvironmentStore.OnChange += HandleModelChange;
+
+        try
+        {
+            EnvironmentStore.New();
+            var model = EnvironmentStore.Model;
+
+            if (model == null)
+                Navigation.NavigateTo("/environments");
+
+            EditContext = new EditContext(model!);
+            EditContext.OnFieldChanged += HandleFormChange;
+        }
+        catch (Exception ex)
+        {
+            NotificationService.ShowError(ex);
+        }
+    }
+
+    protected virtual async Task HandleSave()
+    {
+        try
+        {
+            await EnvironmentStore.Save();
+
+            var model = EnvironmentStore.Original;
+
+            NotificationService.ShowSuccess($"Environment '{model!.Name}' saved successfully");
+            Navigation.NavigateTo($"/environments/{model!.Id}");
+        }
+        catch (Exception ex)
+        {
+            NotificationService.ShowError(ex);
+        }
+    }
+
+    private void HandleModelChange()
+    {
+        InvokeAsync(() => StateHasChanged());
+    }
+
+    private void HandleFormChange(object? sender, FieldChangedEventArgs args)
+    {
+        EnvironmentStore.NotifyStateChanged();
+    }
+
+    public void Dispose()
+    {
+        EnvironmentStore.OnChange -= HandleModelChange;
+
+        if (EditContext != null)
+            EditContext.OnFieldChanged -= HandleFormChange;
+    }
+
+}
