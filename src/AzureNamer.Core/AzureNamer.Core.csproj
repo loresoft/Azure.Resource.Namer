@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR.CommandQuery.EntityFrameworkCore" Version="15.2.0" />
-    <PackageReference Include="MicroSoft.EntityFrameworkCore.SqlServer" Version="8.0.2" />
+    <PackageReference Include="MicroSoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
   </ItemGroup>
 
