@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using AzureNamer.Core.Options;
 using AzureNamer.Shared;
 
 using Blazone.Authentication;
@@ -134,13 +135,15 @@ public static class Program
         services
             .TryAddSingleton(sp => sp.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions);
 
+        // change authentication cookie name
         builder.Services
             .Configure<CookieAuthenticationOptions>(
                 name: CookieAuthenticationDefaults.AuthenticationScheme,
                 configureOptions: options => options.Cookie.Name = ".AzureNamer.Authentication"
             );
 
-
+        string logDirectory = GetLoggingPath();
+        services.Configure<LoggingOptions>(options => options.Path = logDirectory);
     }
 
     private static void ConfigureMiddleware(WebApplication app)
@@ -171,6 +174,9 @@ public static class Program
 
         app.MapBlazoneEndpoints();
         app.MapFeatureEndpoints();
+
+        // fallback for api endpoints
+        app.MapFallback("api/{**slug}", () => Results.NotFound());
 
         app.MapFallbackToFile("index.html");
     }

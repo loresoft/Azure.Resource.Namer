@@ -37,11 +37,9 @@
                                 title="Select Log File"
                                 @bind="SelectFile"
                                 @bind:after="HandleFileChange">
-                            <option value="">- select -</option>
-                            <Repeater Items="Files" TItem="string">
-                                <Row Context="item">
-                                    <option value="@item">@item</option>
-                                </Row>
+                            <option value="">- file -</option>
+                            <Repeater Items="Files" TItem="string" Context="item">
+                                <option @key="item" value="@item">@item</option>
                             </Repeater>
                         </select>
 
@@ -50,7 +48,7 @@
                                 title="Filter to Log Level"
                                 @bind="SelectLevel"
                                 @bind:after="HandleFilterChange">
-                            <option value="">- select -</option>
+                            <option value="">- level -</option>
                             <option value="Critical">Critical</option>
                             <option value="Error">Error</option>
                             <option value="Warning">Warning</option>
@@ -83,41 +81,20 @@
             <div class="table-responsive">
                 <DataGrid Data="Logs" TItem="LogEventModel" Filter="FilterLogs" class="table table-hover table-bordered mb-0" @ref="DataGrid">
                     <DataColumns>
-                        <DataColumn TItem="LogEventModel" Property="p => p.Level" Width="3px">
+                        <DataColumn TItem="LogEventModel" Property="p => p.Level" Title="&nbsp;" Width="32px" Sortable="false">
                             <Template Context="log">
-                                @switch (log.Level)
-                                {
-                                    case "Warning":
-                                        <i class="fa-solid fa-triangle-exclamation text-warning"></i>
-                                        break;
-                                    case "Error":
-                                    case "Critical":
-                                    case "Fatal":
-                                        <i class="fa-solid fa-circle-xmark text-danger"></i>
-                                        break;
-                                    case "Information":
-                                        <i class="fa-solid fa-circle-info text-primary"></i>
-                                        break;
-                                    case "Debug":
-                                    case "Verbose":
-                                    case "Trace":
-                                        <i class="fa-solid fa-circle-info text-secondary"></i>
-                                        break;
-                                    default:
-                                        <i class="fa-solid fa-circle-info text-primary"></i>
-                                        break;
-                                }
+                                <IconSelector Name="@log.Level" />
                             </Template>
                         </DataColumn>
-                        <DataColumn TItem="LogEventModel" Property="p => p.Timestamp" Width="200px" SortIndex="0" SortDescending="true">
+                        <DataColumn TItem="LogEventModel" Property="p => p.Timestamp" Width="140px" SortIndex="0" SortDescending="true">
                             <Template Context="log">
-                                <div title="@log.Timestamp?.ToString("R")">
-                                    @log.Timestamp?.ToString("HH:mm:ss.fff")
+                                <div title="@log.Timestamp?.ToLocalTime().ToString("G")">
+                                    @log.Timestamp?.ToLocalTime().ToString("HH:mm:ss.fff")
                                 </div>
                             </Template>
                         </DataColumn>
                         <DataColumn TItem="LogEventModel" Property="p => p.Level" Width="120px" />
-                        <DataColumn TItem="LogEventModel" Property="p => p.RenderedMessage" Title="Message" />
+                        <DataColumn TItem="LogEventModel" Property="p => p.RenderedMessage" Title="Message" Sortable="false" />
                     </DataColumns>
                     <DataPagination Context="grid">
                         <div class="w-100 m-1 d-flex justify-content-between align-items-center">
@@ -138,8 +115,7 @@
                                        aria-selected="true"
                                        role="tab">Properties</a>
                                 </li>
-                                @if (!string.IsNullOrWhiteSpace(log.Exception))
-                                {
+                                <Conditional Condition="log.Exception.HasValue()">
                                     <li class="nav-item" role="presentation">
                                         <a class="nav-link"
                                            id="exception-tab-@log.RowKey"
@@ -148,7 +124,7 @@
                                            aria-controls="exception-panel-@log.RowKey"
                                            role="tab">Exception</a>
                                     </li>
-                                }
+                                </Conditional>
                             </ul>
                             <div class="tab-content" id="myTabContent">
                                 <div class="tab-pane fade show active"
@@ -168,26 +144,24 @@
                                             <th class="json-name">SpanId</th>
                                             <td class="json-value">@log.SpanId</td>
                                         </tr>
-                                        @foreach (var item in log.Data)
-                                        {
-                                            <tr>
+                                        <Repeater Items="log.Data" Context="item">
+                                            <tr @key="item.Key">
                                                 <th class="json-name">@item.Key</th>
                                                 <td class="json-value">
                                                     <JsonDisplay JsonElement="@item.Value" />
                                                 </td>
                                             </tr>
-                                        }
+                                        </Repeater>
                                     </table>
                                 </div>
-                                @if (!string.IsNullOrWhiteSpace(log.Exception))
-                                {
+                                <Conditional Condition="log.Exception.HasValue()">
                                     <div class="tab-pane fade"
                                          id="exception-panel-@log.RowKey"
                                          aria-labelledby="exception-tab-@log.RowKey"
                                          role="tabpanel">
                                         <pre style="overflow: auto; max-height: 400px; font-family: Courier New">@log.Exception</pre>
                                     </div>
-                                }
+                                </Conditional>
                             </div>
                         </div>
                     </DetailTemplate>

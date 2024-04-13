@@ -1,0 +1,27 @@
+@switch (Name)
+{
+    case "Warning":
+        <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+        break;
+    case "Error":
+    case "Critical":
+    case "Fatal":
+        <i class="fa-solid fa-circle-xmark text-danger"></i>
+        break;
+    case "Information":
+        <i class="fa-solid fa-circle-info text-primary"></i>
+        break;
+    case "Debug":
+    case "Verbose":
+    case "Trace":
+        <i class="fa-solid fa-circle-info text-secondary"></i>
+        break;
+    default:
+        <i class="fa-solid fa-circle-info text-primary"></i>
+        break;
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public required string Name { get; set; }
+}

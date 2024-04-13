@@ -52,7 +52,7 @@ public class ClaimsTransformation : IClaimsTransformation
 
     private async Task<ClaimsPrincipal> LoadClaims(ICacheEntry cacheEntry, ClaimsPrincipal principal)
     {
-        var browserDetail = _contextAccessor.HttpContext.GetBrowserData();
+        var browserDetail = _contextAccessor.HttpContext.GetBrowserDetail();
         var command = new AuthorizationCommand(principal, browserDetail);
         var userMembership = await _mediator.Send(command);
 

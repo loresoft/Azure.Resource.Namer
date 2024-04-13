@@ -6,12 +6,12 @@ namespace AzureNamer.Server.Extensions;
 
 public static class HttpExtensions
 {
-    public static BrowserDetail? GetBrowserData(this HttpContext? httpContext)
+    public static BrowserDetail? GetBrowserDetail(this HttpContext? httpContext)
     {
-        return httpContext?.Request.GetBrowserData();
+        return httpContext?.Request.GetBrowserDetail();
     }
 
-    public static BrowserDetail? GetBrowserData(this HttpRequest? httpRequest)
+    public static BrowserDetail? GetBrowserDetail(this HttpRequest? httpRequest)
     {
         if (httpRequest == null)
             return null;

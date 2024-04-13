@@ -33,13 +33,9 @@
                                 @bind="SelectedId"
                                 @bind:after="Refresh">
                             <option value="">-- All --</option>
-                            @if (MembershipStore.Model?.Organizations != null)
-                            {
-                                @foreach (var organization in MembershipStore.Model.Organizations)
-                                {
-                                    <option value="@organization.Id">@organization.Name</option>
-                                }
-                            }
+                            <Repeater Items="MembershipStore.Model?.Organizations" Context="organization">
+                                <option @key="@organization.Id" value="@organization.Id">@organization.Name</option>
+                            </Repeater>
                         </select>
 
                         <div class="input-group input-group-sm me-2">

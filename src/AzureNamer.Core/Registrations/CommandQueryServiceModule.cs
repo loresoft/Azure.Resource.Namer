@@ -1,7 +1,7 @@
 using AzureNamer.Core.Data;
 using AzureNamer.Shared;
 
-using MediatR.CommandQuery.EntityFrameworkCore;
+using MediatR.CommandQuery;
 
 using Microsoft.Extensions.DependencyInjection;
 

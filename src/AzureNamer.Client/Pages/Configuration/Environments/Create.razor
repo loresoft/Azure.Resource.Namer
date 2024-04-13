@@ -29,9 +29,7 @@
         <div class="card">
             <div class="card-header">
                 <i class="fas fa-user me-2" aria-hidden="true"></i> Environment Create
-                <Conditional Condition="@EnvironmentStore.IsDirty">
-                    *
-                </Conditional>
+                <Conditional Condition="@EnvironmentStore.IsDirty">*</Conditional>
             </div>
 
             <div class="card-body">
@@ -51,17 +49,12 @@
                                     type="submit"
                                     Busy="EnvironmentStore.IsBusy"
                                     Disabled="EnvironmentStore.IsClean"
+                                    BusyText="Saving"
                                     class="btn btn-primary">
-                            <BusyTemplate>
-                                <span class='spinner-border spinner-border-sm'></span> Saving...
-                            </BusyTemplate>
-                            <ChildContent>
-                                Save
-                            </ChildContent>
+                            Save
                         </BusyButton>
                     </div>
                     <div class="col">
-
                     </div>
                 </div>
             </div>
