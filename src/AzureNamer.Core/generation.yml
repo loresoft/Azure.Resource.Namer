@@ -69,6 +69,7 @@ model:
     baseClass: AbstractValidator<{Model.Name}>
     namespace: '{Project.Namespace}.Shared.Validation'
     directory: '{Project.Directory}\..\AzureNamer.Shared\Validation'
+    attributes: '[RegisterSingleton<IValidator<{Model.Name}>>]'
 script:
   context:
     - templatePath: '..\..\templates\DomainJsonContext.csx'

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,10 +16,11 @@ public static class StringExtensions
     /// <returns>
     /// A truncate string.
     /// </returns>
-    public static string Truncate(this string? text, int keep, string ellipsis = "...")
+    [return: NotNullIfNotNull(nameof(text))]
+    public static string? Truncate(this string? text, int keep, string ellipsis = "...")
     {
         if (string.IsNullOrEmpty(text))
-            return string.Empty;
+            return text;
 
         if (string.IsNullOrEmpty(ellipsis))
             ellipsis = string.Empty;
@@ -81,7 +83,7 @@ public static class StringExtensions
     /// <param name="sb">The StringBuilder instance to append to.</param>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An object array that contains zero or more objects to format.</param>
-    public static StringBuilder AppendLine(this StringBuilder sb, string format, params object[] args)
+    public static StringBuilder AppendLine(this StringBuilder sb, [StringSyntax("CompositeFormat")] string format, params object[] args)
     {
         sb.AppendFormat(format, args);
         sb.AppendLine();
@@ -94,7 +96,7 @@ public static class StringExtensions
     /// <param name="sb">The StringBuilder instance to append to.</param>
     /// <param name="text">The string to append.</param>
     /// <param name="condition">The condition delegate to evaluate. If condition is null, String.IsNullOrWhiteSpace method will be used.</param>
-    public static StringBuilder AppendIf(this StringBuilder sb, string text, Func<string, bool> condition = null)
+    public static StringBuilder AppendIf(this StringBuilder sb, string? text, Func<string?, bool>? condition = null)
     {
         var c = condition ?? (s => !string.IsNullOrWhiteSpace(s));
 
@@ -124,7 +126,7 @@ public static class StringExtensions
     /// <param name="sb">The StringBuilder instance to append to.</param>
     /// <param name="text">The string to append.</param>
     /// <param name="condition">The condition delegate to evaluate. If condition is null, String.IsNullOrWhiteSpace method will be used.</param>
-    public static StringBuilder AppendLineIf(this StringBuilder sb, string text, Func<string, bool> condition = null)
+    public static StringBuilder AppendLineIf(this StringBuilder sb, string text, Func<string, bool>? condition = null)
     {
         var c = condition ?? (s => !string.IsNullOrWhiteSpace(s));
 
