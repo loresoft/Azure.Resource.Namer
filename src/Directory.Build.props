@@ -1,7 +1,6 @@
 <Project>
 
   <PropertyGroup Label="Package">
-    <Product>AzureNamer</Product>
     <Description>Azure Resource Name Generator</Description>
     <Copyright>Copyright © $([System.DateTime]::Now.ToString(yyyy)) LoreSoft</Copyright>
     <Authors>LoreSoft</Authors>
@@ -14,7 +13,6 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/loresoft/AzureNamer</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -23,7 +21,18 @@
     <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
   </PropertyGroup>
 
-  <PropertyGroup>
+<PropertyGroup Label="Debug">
+    <DebugType>embedded</DebugType>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Options">
+    <DefaultLanguage>en-US</DefaultLanguage>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn>1591</NoWarn>
