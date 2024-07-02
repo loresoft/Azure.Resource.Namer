@@ -86,7 +86,7 @@ jobs:
           name: application
 
       - name: Deploy SQL Server Database to Azure Staging
-        uses: azure/sql-action@v2.2
+        uses: azure/sql-action@v2.3
         with:
           connection-string: ${{secrets.AZURE_SQL_CONNECTION}}
           path: './AzureNamer.dacpac'
@@ -121,7 +121,7 @@ jobs:
           name: Application
 
       - name: Deploy SQL Server Database to Azure
-        uses: azure/sql-action@v2.2
+        uses: azure/sql-action@v2.3
         with:
           connection-string: ${{secrets.AZURE_SQL_CONNECTION}}
           path: './AzureNamer.dacpac'
